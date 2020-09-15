@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using MessageBoard.Services;
 using MessageBoard.Model;
 using MessageBoard.Api.Attributes;
 
@@ -9,11 +10,11 @@ namespace MessageBoard.Api.Controllers
     [Route("[controller]")]
     public class MessageController : ControllerBase
     {
-        private readonly AuthorHelper test;
+        private readonly IMessageService _messageService;
 
-        public MessageController(AuthorHelper test)
+        public MessageController(IMessageService messageService)
         {
-            test = test;
+            _messageService = messageService;
         }
 
         /// <summary>
@@ -23,7 +24,7 @@ namespace MessageBoard.Api.Controllers
         [HttpGet]
         public ICollection<Message> Get()
         {
-            return null;
+            return _messageService.LoadMessages();
         }
 
         /// <summary>
@@ -35,9 +36,7 @@ namespace MessageBoard.Api.Controllers
         [ServiceFilter(typeof(AuthorFilterAttribute))]
         public Message Create(Message message)
         {
-            //test.RequesterIp;
-
-            return null;
+            return _messageService.CreateMessage(message);
         }
     }
 }

@@ -2,6 +2,8 @@ using System.Reflection;
 using MessageBoard.Api.Attributes;
 using MessageBoard.Daos;
 using MessageBoard.Daos.Impl;
+using MessageBoard.Services;
+using MessageBoard.Services.Impl;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +33,7 @@ namespace MessageBoard.Api
 
             services.AddScoped<AuthorHelper>();
             services.AddScoped<IMessageDao, MessageDao>();
+            services.AddScoped<IMessageService, MessageService>();
 
             services.AddDbContext<MessageBoardDbContext>(options => options.UseInMemoryDatabase(databaseName: Configuration["DBName"]));
         }
@@ -42,7 +45,7 @@ namespace MessageBoard.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseRouting();
 
             app.UseSwaggerUi3();
