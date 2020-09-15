@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 
-namespace MessageBoard.Api
+namespace MessageBoard.Api.Attributes
 {
     /// <summary>
     /// TODO: implement Exception to HttpCode and message dictionary

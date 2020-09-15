@@ -1,4 +1,7 @@
 using System.Reflection;
+using MessageBoard.Api.Attributes;
+using MessageBoard.Daos;
+using MessageBoard.Daos.Impl;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +22,15 @@ namespace MessageBoard.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<AuthorFilterAttribute>();
+
             services.AddControllers(options => options.Filters.Add(new GlobalExceptionFilterAttribute()));
             services.AddHealthChecks();
 
             services.AddOpenApiDocument(cfg => cfg.Title = Assembly.GetExecutingAssembly().GetName().Name);
+
+            services.AddScoped<AuthorHelper>();
+            services.AddScoped<IMessageDao, MessageDao>();
 
             services.AddDbContext<MessageBoardDbContext>(options => options.UseInMemoryDatabase(databaseName: Configuration["DBName"]));
         }

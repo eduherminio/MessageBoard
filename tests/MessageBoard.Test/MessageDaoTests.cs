@@ -2,33 +2,35 @@
 using MessageBoard.Daos.Impl;
 using MessageBoard.Model;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using System;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 using Xunit;
 
 namespace MessageBoard.Test
 {
     public class MessageDaoTests
     {
+        private readonly AuthorHelper _authorHelperStub;
         private readonly MessageBoardDbContext _dbContext;
         private readonly IMessageDao _dao;
 
         public MessageDaoTests()
         {
+            _authorHelperStub = new AuthorHelper();
+
             var dbContextOptionsBuilder = new DbContextOptionsBuilder<MessageBoardDbContext>();
             dbContextOptionsBuilder.UseInMemoryDatabase(Assembly.GetAssembly(typeof(MessageDaoTests)).GetName().Name);
             _dbContext = new MessageBoardDbContext(dbContextOptionsBuilder.Options);
 
-            _dao = new MessageDao(_dbContext);
+            _dao = new MessageDao(_dbContext, _authorHelperStub);
         }
 
         [Fact]
         public void CreateMessage()
         {
             // Arrange
+            _authorHelperStub.RequesterIp = "192.168.1.1";
+
             var messageToCreate = new Message()
             {
                 Content = "CreateMessage"
@@ -42,6 +44,9 @@ namespace MessageBoard.Test
             // Assert
             Assert.NotNull(createdMessage.Id);
             Assert.Equal(messageToCreate.Content, createdMessage.Content);
+
+            Assert.Equal(_authorHelperStub.RequesterIp, createdMessage.Author);
+            Assert.Equal(createdMessage.Author, createdMessage.LastModifiedBy);
 
             Assert.Equal(createdMessage.CreatedDate, createdMessage.LastModifiedDate);
 

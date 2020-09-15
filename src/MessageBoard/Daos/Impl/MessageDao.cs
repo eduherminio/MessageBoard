@@ -8,10 +8,12 @@ namespace MessageBoard.Daos.Impl
     public class MessageDao : IMessageDao
     {
         private readonly DbContext _dbContext;
+        private readonly AuthorHelper _authorHelper;
 
-        public MessageDao(MessageBoardDbContext dbContext)
+        public MessageDao(MessageBoardDbContext dbContext, AuthorHelper authorHelper)
         {
             _dbContext = dbContext;
+            _authorHelper = authorHelper;
         }
 
         public Message CreateMessage(Message message)
@@ -21,7 +23,7 @@ namespace MessageBoard.Daos.Impl
             message.CreatedDate = DateTime.UtcNow;
             message.LastModifiedDate = message.CreatedDate;
 
-            //message.Author =              TODO
+            message.Author = _authorHelper.RequesterIp;
             message.LastModifiedBy = message.Author;
 
             _dbContext.Add(message);
